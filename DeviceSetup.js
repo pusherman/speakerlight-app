@@ -79,7 +79,7 @@ class DeviceSetup extends Component {
       wifiPassword: null,
       isLoading: false,
       defaultPort: 187,
-      startHost: 3
+      startHost: 115
     };
   }
 
