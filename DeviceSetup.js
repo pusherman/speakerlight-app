@@ -99,17 +99,15 @@ class DeviceSetup extends Component {
   _checkAddress(subnet, host, port) {
     let uriToCheck = `http://${subnet}.${host}:${port}/index.php`;
 
-    let timeoutPromise = new Promise(function(resolve) {
-      setTimeout(resolve, 5000);
+    var timeoutPromise = new Promise(function(resolve) {
+      setTimeout(resolve, 1000);
     });
 
     console.log(`checking ${uriToCheck}`);
 
-    Promise.race([timeoutPromise, fetch(uriToCheck)]).then(res => {
-      if (res instanceof Response) {
-        res.then(response => response.json())
-           .then(json => this._found())
-           .catch(error => this._notFound(subnet, host, port));
+    Promise.race([timeoutPromise, fetch(uriToCheck)]).then(response => {
+      if (response instanceof Response) {
+        this._found(uriToCheck);
 
       } else {
         this._notFound(subnet, host, port);
