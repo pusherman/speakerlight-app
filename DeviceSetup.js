@@ -88,10 +88,8 @@ class DeviceSetup extends Component {
   }
 
   _notFound(subnet, host, port) {
-    let nextHost = host++;
-
-    if (nextHost <= 255) {
-      this._checkAddress(subnet, nextHost, port);
+    if (++host <= 255) {
+      this._checkAddress(subnet, host, port);
 
     } else {
       console.log('light not found');
@@ -99,10 +97,24 @@ class DeviceSetup extends Component {
   }
 
   _checkAddress(subnet, host, port) {
-    fetch(`${subnet}.${host}:${port}/index.php`)
-      .then(response => response.json())
-      .then(json => this._found())
-      .catch(error => this._notFound(subnet, host, port));
+    let uriToCheck = `http://${subnet}.${host}:${port}/index.php`;
+
+    let timeoutPromise = new Promise(function(resolve) {
+      setTimeout(resolve, 5000);
+    });
+
+    console.log(`checking ${uriToCheck}`);
+
+    Promise.race([timeoutPromise, fetch(uriToCheck)]).then(res => {
+      if (res instanceof Response) {
+        res.then(response => response.json())
+           .then(json => this._found())
+           .catch(error => this._notFound(subnet, host, port));
+
+      } else {
+        this._notFound(subnet, host, port);
+      }
+    });
   }
 
   onSearchPressed() {
@@ -110,7 +122,7 @@ class DeviceSetup extends Component {
 
     NetworkInfo.getIPAddress(ip => {
       var subnet = ip.substr(0, ip.lastIndexOf('.'));
-      this._checkAddress(subnet, this.state.startHost, 187);
+      this._checkAddress(subnet, this.state.startHost, this.state.defaultPort);
     });
   }
 
