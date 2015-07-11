@@ -1,6 +1,7 @@
 'use strict';
 
-var React = require('react-native');
+var React = require('react-native'),
+    NetworkInfo = require('NativeModules').NetworkInfo;
 
 var {
   StyleSheet,
@@ -70,21 +71,51 @@ class DeviceSetup extends Component {
   constructor(props) {
     super(props);
 
+    NetworkInfo.getSSID(ssid => {
+      console.log(ssid);
+    });
+
     this.state = {
       wifiPassword: null,
-      isLoading: false
+      isLoading: false,
+      defaultPort: 187,
+      startHost: 3
     };
+  }
+
+  _found(response) {
+    console.log('speaker found!');
+  }
+
+  _notFound(subnet, host, port) {
+    let nextHost = host++;
+
+    if (nextHost <= 255) {
+      this._checkAddress(subnet, nextHost, port);
+
+    } else {
+      console.log('light not found');
+    }
+  }
+
+  _checkAddress(subnet, host, port) {
+    fetch(`${subnet}.${host}:${port}/index.php`)
+      .then(response => response.json())
+      .then(json => this._found())
+      .catch(error => this._notFound(subnet, host, port));
   }
 
   onSearchPressed() {
     this.setState({ isLoading: true });
-    console.log(this.state.wifiPassword);
+
+    NetworkInfo.getIPAddress(ip => {
+      var subnet = ip.substr(0, ip.lastIndexOf('.'));
+      this._checkAddress(subnet, this.state.startHost, 187);
+    });
   }
 
   onSearchTextChanged(event) {
-    console.log('onSearchTextChanged');
     this.setState({ wifiPassword: event.nativeEvent.text });
-    console.log(this.state.wifiPassword);
   }
 
   render() {
