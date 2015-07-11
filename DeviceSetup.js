@@ -84,7 +84,8 @@ class DeviceSetup extends Component {
   }
 
   _found(response) {
-    console.log('speaker found!');
+    console.log('found target');
+    this.setState({ isLoading: false });
   }
 
   _notFound(subnet, host, port) {
