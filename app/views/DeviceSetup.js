@@ -1,7 +1,8 @@
 'use strict';
 
 var React = require('react-native'),
-    NetworkInfo = require('NativeModules').NetworkInfo;
+    NetworkInfo = require('NativeModules').NetworkInfo,
+    SLScanner = require('../lib/SLScanner');
 
 var {
   StyleSheet,
@@ -11,7 +12,8 @@ var {
   TouchableHighlight,
   ActivityIndicatorIOS,
   Image,
-  Component
+  Component,
+  AsyncStorage
 } = React;
 
 var styles = StyleSheet.create({
@@ -19,13 +21,15 @@ var styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 18,
     textAlign: 'center',
-    color: '#656565'
+    color: '#fff'
   },
 
   container: {
     padding: 30,
     marginTop: 65,
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#000',
+    flex: 1
   },
 
   flowRight: {
@@ -71,6 +75,14 @@ class DeviceSetup extends Component {
   constructor(props) {
     super(props);
 
+    SLScanner.scan().then(response => {
+      console.log('we have a winner!');
+      console.log(response);
+
+    }).catch(reject => {
+      console.log('speakerlight not found');
+    });
+
     NetworkInfo.getSSID(ssid => {
       console.log(ssid);
     });
@@ -83,46 +95,8 @@ class DeviceSetup extends Component {
     };
   }
 
-  _found(response) {
-    console.log('found target');
-    this.setState({ isLoading: false });
-  }
-
-  _notFound(subnet, host, port) {
-    if (++host <= 255) {
-      this._checkAddress(subnet, host, port);
-
-    } else {
-      console.log('light not found');
-    }
-  }
-
-  _checkAddress(subnet, host, port) {
-    let uriToCheck = `http://${subnet}.${host}:${port}/index.php`;
-
-    var timeoutPromise = new Promise(function(resolve) {
-      setTimeout(resolve, 1000);
-    });
-
-    console.log(`checking ${uriToCheck}`);
-
-    Promise.race([timeoutPromise, fetch(uriToCheck)]).then(response => {
-      if (response instanceof Response) {
-        this._found(uriToCheck);
-
-      } else {
-        this._notFound(subnet, host, port);
-      }
-    });
-  }
-
   onSearchPressed() {
-    this.setState({ isLoading: true });
-
-    NetworkInfo.getIPAddress(ip => {
-      var subnet = ip.substr(0, ip.lastIndexOf('.'));
-      this._checkAddress(subnet, this.state.startHost, this.state.defaultPort);
-    });
+    //handle setting the wifi password
   }
 
   onSearchTextChanged(event) {

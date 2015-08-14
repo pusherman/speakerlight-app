@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native'),
-    DeviceSetup = require('./DeviceSetup');
+    DeviceSetup = require('./app/views/DeviceSetup');
 
 var {
   StyleSheet,
@@ -11,14 +11,8 @@ var {
 } = React;
 
 var styles = StyleSheet.create({
-  text: {
-    color: 'black',
-    backgroundColor: 'white',
-    fontSize: 30,
-    margin: 80
-  },
   container: {
-    flex: 1
+    flex: 1,
   }
 });
 
@@ -27,6 +21,11 @@ class SpeakerLightApp extends Component {
     return (
       <NavigatorIOS
         style = {styles.container}
+        barTintColor = '#000'
+        titleTextColor = '#fff'
+        tintColor = '#000'
+        shadowHidden = {true}
+
         initialRoute = {{
           title: 'Speaker Light',
           component: DeviceSetup,
