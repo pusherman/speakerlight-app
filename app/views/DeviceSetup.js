@@ -76,11 +76,12 @@ class DeviceSetup extends Component {
     super(props);
 
     SLScanner.scan().then(response => {
-      console.log('we have a winner!');
-      console.log(response);
+      this.setState({
+        isLoading: false,
+      });
 
     }).catch(reject => {
-      console.log('speakerlight not found');
+      this.setState({ isLoading: false });
     });
 
     NetworkInfo.getSSID(ssid => {
@@ -92,6 +93,7 @@ class DeviceSetup extends Component {
       isLoading: false,
       defaultPort: 187,
       startHost: 115
+      isLoading: true,
     };
   }
 
