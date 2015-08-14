@@ -78,6 +78,7 @@ class DeviceSetup extends Component {
     SLScanner.scan().then(response => {
       this.setState({
         isLoading: false,
+        deviceUrl: response
       });
 
     }).catch(reject => {
@@ -85,15 +86,14 @@ class DeviceSetup extends Component {
     });
 
     NetworkInfo.getSSID(ssid => {
-      console.log(ssid);
+      this.setState({ssid: ssid});
     });
 
     this.state = {
       wifiPassword: null,
-      isLoading: false,
-      defaultPort: 187,
-      startHost: 115
       isLoading: true,
+      deviceIP: null,
+      ssid: null
     };
   }
 
