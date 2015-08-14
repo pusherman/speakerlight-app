@@ -98,7 +98,15 @@ class DeviceSetup extends Component {
   }
 
   onSearchPressed() {
-    //handle setting the wifi password
+    var url = this.state.deviceUrl,
+        psk = this.state.wifiPassword,
+        ssid = this.state.ssid;
+
+    url += `?psk=${psk}&ssid=${ssid}`;
+
+    fetch(url)
+      .then(() => console.log('yay'))
+      .catch(() => console.log('boo'));
   }
 
   onSearchTextChanged(event) {
