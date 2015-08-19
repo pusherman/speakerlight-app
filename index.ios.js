@@ -21,9 +21,8 @@ class SpeakerLightApp extends Component {
     return (
       <NavigatorIOS
         style = {styles.container}
-        barTintColor = '#000'
+        barTintColor = '#454857'
         titleTextColor = '#fff'
-        tintColor = '#000'
         shadowHidden = {true}
 
         initialRoute = {{

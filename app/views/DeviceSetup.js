@@ -21,15 +21,16 @@ var styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 18,
     textAlign: 'center',
-    color: '#fff'
+    color: '#454857'
   },
 
   container: {
     padding: 30,
     marginTop: 65,
     alignItems: 'center',
-    backgroundColor: '#000',
-    flex: 1
+    backgroundColor: '#BEE2E7',
+    flex: 1,
+    fontFamily: 'Montserrat'
   },
 
   flowRight: {
@@ -48,8 +49,8 @@ var styles = StyleSheet.create({
     height: 36,
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#48BBEC',
-    borderColor: '#48BBEC',
+    backgroundColor: '#454857',
+    borderColor: '#454857',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -64,9 +65,9 @@ var styles = StyleSheet.create({
     flex: 4,
     fontSize: 18,
     borderWidth: 1,
-    borderColor: '#48BBEC',
+    borderColor: '#454857',
     borderRadius: 8,
-    color: '#48BBEC'
+    color: '#454857'
   }
 });
 
@@ -76,6 +77,7 @@ class DeviceSetup extends Component {
     super(props);
 
     SLScanner.scan().then(response => {
+      console.log(response);
       this.setState({
         isLoading: false,
         deviceUrl: response
