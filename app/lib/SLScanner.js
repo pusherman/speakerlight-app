@@ -10,7 +10,7 @@ var SLScanner = {
       let uriToCheck = `http://${subnet}.${host}:${this._port}/setup_wifi.php`;
 
       var timeoutPromise = new Promise(resolveTimeout => {
-        setTimeout(resolveTimeout, 1000);
+        setTimeout(resolveTimeout, 2000);
       });
 
       Promise.race([timeoutPromise, fetch(uriToCheck)]).then(response => {
