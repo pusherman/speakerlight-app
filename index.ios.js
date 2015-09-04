@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native'),
-    DeviceSetup = require('./app/views/DeviceSetup');
+    Status = require('./app/views/Status');
 
 var {
   StyleSheet,
@@ -27,10 +27,10 @@ class SpeakerLightApp extends Component {
 
         initialRoute = {{
           title: 'Speaker Light',
-          component: DeviceSetup,
+          component: Status,
         }}/>
     );
   }
 }
 
-AppRegistry.registerComponent('speakerlight', function() { return SpeakerLightApp });
+AppRegistry.registerComponent('speakerlight', () => SpeakerLightApp);

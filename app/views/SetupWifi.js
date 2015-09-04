@@ -2,7 +2,7 @@
 
 var React = require('react-native'),
     NetworkInfo = require('NativeModules').NetworkInfo,
-    SLScanner = require('../lib/SLScanner');
+    SLDevice = require('../lib/SLDevice');
 
 var {
   StyleSheet,
@@ -10,16 +10,12 @@ var {
   TextInput,
   View,
   TouchableHighlight,
-  ActivityIndicatorIOS,
-  Image,
-  Component,
-  AsyncStorage
+  Component
 } = React;
 
 var styles = StyleSheet.create({
   description: {
     marginBottom: 20,
-    fontSize: 18,
     textAlign: 'center',
     color: '#454857'
   },
@@ -29,8 +25,7 @@ var styles = StyleSheet.create({
     marginTop: 65,
     alignItems: 'center',
     backgroundColor: '#BEE2E7',
-    flex: 1,
-    fontFamily: 'Montserrat'
+    flex: 1
   },
 
   flowRight: {
@@ -40,7 +35,6 @@ var styles = StyleSheet.create({
   },
 
   buttonText: {
-    fontSize: 18,
     color: 'white',
     alignSelf: 'center'
   },
@@ -58,12 +52,11 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
 
-  searchInput: {
+  inputText: {
     height: 36,
     padding: 4,
     marginRight: 5,
     flex: 4,
-    fontSize: 18,
     borderWidth: 1,
     borderColor: '#454857',
     borderRadius: 8,
@@ -71,21 +64,10 @@ var styles = StyleSheet.create({
   }
 });
 
-class DeviceSetup extends Component {
+class SetupWifi extends Component {
 
   constructor(props) {
     super(props);
-
-    SLScanner.scan().then(response => {
-      console.log(response);
-      this.setState({
-        isLoading: false,
-        deviceUrl: response
-      });
-
-    }).catch(reject => {
-      this.setState({ isLoading: false });
-    });
 
     NetworkInfo.getSSID(ssid => {
       this.setState({ssid: ssid});
@@ -94,58 +76,56 @@ class DeviceSetup extends Component {
     this.state = {
       wifiPassword: null,
       isLoading: true,
-      deviceIP: null,
       ssid: null
     };
   }
 
-  onSearchPressed() {
-    var url = this.state.deviceUrl,
-        psk = this.state.wifiPassword,
-        ssid = this.state.ssid;
-
-    url += `?psk=${psk}&ssid=${ssid}`;
-
-    fetch(url)
-      .then(() => console.log('yay'))
-      .catch(() => console.log('boo'));
-  }
-
-  onSearchTextChanged(event) {
+  onPasswordTextChanged(event) {
     this.setState({ wifiPassword: event.nativeEvent.text });
   }
 
+  onSetupPressed() {
+    SLDevice.setWifi(this.state.wifiPassword, 'popcorn').then(response => {
+      this.setState({success: true});
+
+    }).catch(response => {
+      this.setState({failure: true});
+    });
+  }
+
   render() {
-    var spinner = this.state.isLoading ?
-      <ActivityIndicatorIOS hidden='true' size='large'/> :
-      <View/>;
 
     return (
       <View style={styles.container}>
 
         <Text style={styles.description}>
-          Enter your wifi password below and touch "Go" when done.
+          Enter your wifi password
         </Text>
 
         <View style={styles.flowRight}>
           <TextInput
-            style={styles.searchInput}
+            style={styles.inputText}
             value={this.state.wifiPassword}
-            onChange={this.onSearchTextChanged.bind(this)}
+            onChange={this.onPasswordTextChanged.bind(this)}
             placeholder='Wifi Password'/>
 
           <TouchableHighlight style={styles.button}
               underlayColor='#99d9f4'
-              onPress={this.onSearchPressed.bind(this)}>
+              onPress={this.onSetupPressed.bind(this)}>
             <Text style={styles.buttonText}>Go</Text>
           </TouchableHighlight>
         </View>
 
-        {spinner}
+        <Text style={styles.description}>
+          Setting for Network: {this.state.ssid}
+        </Text>
 
+        {this.state.success ? <Text>Wifi settings updated!  Unplug the power to your SpeakerLight and remove the network cable.  Wait 5 seconds and plug the power cable back in.</Text> : null}
+
+        {this.state.failure ? <Text>Wifi settings can not be updated at this time.</Text> : null}
       </View>
     );
   }
 }
 
-module.exports = DeviceSetup;
+module.exports = SetupWifi;
