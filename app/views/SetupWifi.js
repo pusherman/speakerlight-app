@@ -85,7 +85,7 @@ class SetupWifi extends Component {
   }
 
   onSetupPressed() {
-    SLDevice.setWifi(this.state.wifiPassword, 'popcorn').then(response => {
+    SLDevice.setWifi(this.state.wifiPassword, this.state.ssid).then(response => {
       this.setState({success: true});
 
     }).catch(response => {

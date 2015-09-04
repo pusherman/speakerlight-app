@@ -16,7 +16,7 @@ var SLDevice = {
     let uri = this._buildUri(this.endpoint.setupWifi);
 
     uri += `?psk=${password}&ssid=${ssid}`;
-console.log('checking uri' + uri);
+
     return fetch(uri);
   }
 };

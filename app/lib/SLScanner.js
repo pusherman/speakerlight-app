@@ -16,7 +16,6 @@ var SLScanner = {
       Promise.race([timeoutPromise, fetch(uriToCheck)]).then(response => {
         if (response instanceof Response) {
           reject(`${subnet}.${host}`);
-//           reject(uriToCheck);
 
         } else {
           resolve('nope!');
